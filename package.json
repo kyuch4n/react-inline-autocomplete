@@ -1,0 +1,19 @@
+{
+  "name": "react-inline-autocomplete",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyuch4n/react-inline-autocomplete.git"
+  },
+  "author": "KYU",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kyuch4n/react-inline-autocomplete/issues"
+  },
+  "homepage": "https://github.com/kyuch4n/react-inline-autocomplete#readme"
+}

@@ -1,1 +1,1 @@
-# react-autocomplete-input
+# react-inline-autocomplete
