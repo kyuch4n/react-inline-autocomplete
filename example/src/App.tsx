@@ -16,7 +16,7 @@ function App() {
     },
     {
       text: 'Apple',
-      value: 'Apple'
+      value: 'Apple',
     },
     {
       text: 'Apple Pencil',
@@ -32,7 +32,7 @@ function App() {
     },
   ];
 
-  const aaa = React.createRef<HTMLInputElement>()
+  const aaa = React.createRef<HTMLInputElement>();
 
   const clickkk = () => {
     aaa.current!.focus();
