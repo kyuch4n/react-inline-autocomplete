@@ -16,10 +16,10 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   return target;
 }
 
-var styles = {"wrap":"_index-module__wrap__31Ve9","input":"_index-module__input__ZX6Lw","complete":"_index-module__complete__NwvFz"};
+var styles = {"wrap":"_31Ve9","input":"_ZX6Lw","complete":"_NwvFz"};
 
 const Autocomplete = (props, ref) => {
-  let {
+  const {
     value,
     dataSource,
     className,
@@ -28,26 +28,26 @@ const Autocomplete = (props, ref) => {
     onFocus,
     onConfirm
   } = props,
-      others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "onBlur", "onChange", "onFocus", "onConfirm"]);
+        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "onBlur", "onChange", "onFocus", "onConfirm"]);
 
-  let [matchedDSItem, setMatchedDSItem] = useState();
-  let [_value, setValue] = useState('');
-  let controlledValue = value != null ? value : _value; // input ref
+  const [matchedDSItem, setMatchedDSItem] = useState();
+  const [_value, setValue] = useState('');
+  const controlledValue = value != null ? value : _value; // input ref
 
   const inputRef = useRef();
   React.useImperativeHandle(ref, () => inputRef.current);
-  const wrapClassString = classNames(styles.wrap, className);
-  const inputClassString = classNames(styles.input);
-  const completeClassString = classNames(styles.complete);
+  const wrapClassString = classNames('ria-wrap', styles.wrap, className);
+  const inputClassString = classNames('ria-input', styles.input);
+  const completeClassString = classNames('ria-complete', styles.complete);
 
   const _onChange = e => {
     // trigger onChange
-    let text = e.target.value;
+    const text = e.target.value;
     onChange && onChange(text);
     setValue(text); // search matched data source item
 
     if (!text) return setMatchedDSItem(null);
-    let matchedDSItem = dataSource.find(i => i.text.startsWith(text));
+    const matchedDSItem = dataSource.find(i => i.text.startsWith(text));
     setMatchedDSItem(matchedDSItem);
   };
 
@@ -55,7 +55,7 @@ const Autocomplete = (props, ref) => {
     if (e.key !== 'Enter') return;
     if (!matchedDSItem) return; // trigger onChange
 
-    let text = matchedDSItem == null ? void 0 : matchedDSItem.text;
+    const text = matchedDSItem == null ? void 0 : matchedDSItem.text;
     setValue(text);
     onChange && onChange(text); // trigger onConfirm and reset
 

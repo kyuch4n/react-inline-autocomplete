@@ -9,11 +9,12 @@ export interface Props {
     onBlur?: () => void;
     onChange?: (text: string) => void;
     onFocus?: () => void;
-    onConfirm?: (option: DataSourceItem) => void;
+    onConfirm?: (item: DataSourceItem) => void;
 }
 export interface DataSourceItem {
     value: string | number;
     text: string;
+    [key: string]: any;
 }
 declare const RefAutoComplete: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLInputElement>>;
 export default RefAutoComplete;

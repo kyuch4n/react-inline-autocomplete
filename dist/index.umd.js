@@ -21,7 +21,7 @@
     return target;
   }
 
-  var styles = {"wrap":"_index-module__wrap__31Ve9","input":"_index-module__input__ZX6Lw","complete":"_index-module__complete__NwvFz"};
+  var styles = {"wrap":"_31Ve9","input":"_ZX6Lw","complete":"_NwvFz"};
 
   var Autocomplete = function Autocomplete(props, ref) {
     var value = props.value,
@@ -47,9 +47,9 @@
     React__default.useImperativeHandle(ref, function () {
       return inputRef.current;
     });
-    var wrapClassString = classNames(styles.wrap, className);
-    var inputClassString = classNames(styles.input);
-    var completeClassString = classNames(styles.complete);
+    var wrapClassString = classNames('ria-wrap', styles.wrap, className);
+    var inputClassString = classNames('ria-input', styles.input);
+    var completeClassString = classNames('ria-complete', styles.complete);
 
     var _onChange = function _onChange(e) {
       // trigger onChange

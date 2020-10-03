@@ -12,12 +12,13 @@ export interface Props {
   onBlur?: () => void;
   onChange?: (text: string) => void;
   onFocus?: () => void;
-  onConfirm?: (option: DataSourceItem) => void;
+  onConfirm?: (item: DataSourceItem) => void;
 }
 
 export interface DataSourceItem {
   value: string | number;
-  text: string
+  text: string;
+  [key: string]: any;
 }
 
 const Autocomplete: React.ForwardRefRenderFunction<HTMLInputElement, Props> = (props, ref) => {
@@ -30,9 +31,9 @@ const Autocomplete: React.ForwardRefRenderFunction<HTMLInputElement, Props> = (p
   const inputRef = useRef<HTMLInputElement>();
   React.useImperativeHandle(ref, () => inputRef.current!);
 
-  const wrapClassString = classNames(styles.wrap, className);
-  const inputClassString = classNames(styles.input);
-  const completeClassString = classNames(styles.complete);
+  const wrapClassString = classNames('ria-wrap', styles.wrap, className);
+  const inputClassString = classNames('ria-input', styles.input);
+  const completeClassString = classNames('ria-complete', styles.complete);
 
   const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // trigger onChange

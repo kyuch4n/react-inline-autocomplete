@@ -1,6 +1,6 @@
 {
   "name": "react-inline-autocomplete",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "react-inline-autocomplete",
   "keywords": [
     "react",
@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "build": "microbundle --no-compress --globals react=React --jsx React.createElement",
-    "dev": "microbundle watch --no-compress --globals react=React --jsx React.createElement"
+    "dev": "microbundle watch --no-compress --globals react=React --jsx React.createElement",
+    "deploy": "gh-pages -d example/build"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
     "@typescript-eslint/parser": "^4.3.0",
     "eslint": "^7.10.0",
     "eslint-plugin-react": "^7.21.3",
+    "gh-pages": "^3.1.0",
     "husky": "^4.3.0",
     "lint-staged": "^10.4.0",
     "microbundle": "^0.12.4"
