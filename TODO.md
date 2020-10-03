@@ -1,4 +1,3 @@
-eslint
 auto gen api
 
 travis ci
