@@ -59,8 +59,8 @@ function App() {
   const focus = () => {
     ref.current!.focus();
   };
-  const onChange = () => {}
-  const onConfirm = () => {}
+  const onChange = () => {};
+  const onConfirm = () => {};
 
   return (
     <InlineAutocomplete
@@ -103,6 +103,22 @@ yarn start
 ```
 
 Open `http://localhost:3000`.
+
+## Build & Publish
+
+```
+yarn
+yarn build
+npm publish
+```
+
+```
+cd example
+yarn
+yarn build
+cd ..
+yarn deploy
+```
 
 ## License
 

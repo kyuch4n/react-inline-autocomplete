@@ -1,0 +1,13 @@
+# file
+.eslintrc.js
+.gitignore
+.npmignore
+.prettierrc
+commitlint.config.js
+tsconfig.json
+package-lock.json
+yarn.lock
+
+# folder
+/node_modules
+/lib
