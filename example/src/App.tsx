@@ -32,7 +32,7 @@ function App() {
     },
   ];
 
-  const aaa = React.createRef<HTMLInputElement>();
+  const aaa = React.createRef<HTMLInputElement>()
 
   const clickkk = () => {
     aaa.current!.focus();

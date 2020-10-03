@@ -4,7 +4,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react'],
   rules: {
     'linebreak-style': ['error', 'unix'],
-    //"semi": ["error", "always"],
+    semi: [2, 'always'],
     'no-empty': 0,
     'comma-dangle': 0,
     'no-unused-vars': 0,
