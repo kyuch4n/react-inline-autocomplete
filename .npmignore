@@ -10,4 +10,5 @@ yarn.lock
 
 # folder
 /node_modules
+/example
 /lib
