@@ -1,19 +1,65 @@
 {
   "name": "react-inline-autocomplete",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "react-inline-autocomplete",
+  "keywords": [
+    "react",
+    "component",
+    "react-component",
+    "inline",
+    "autocomplete",
+    "inline-autocomplete"
+  ],
+  "source": "lib/index.tsx",
+  "main": "dist/index.js",
+  "module": "dist/index.module.js",
+  "umd:main": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "microbundle --no-compress --globals react=React --jsx React.createElement",
+    "dev": "microbundle watch --no-compress --globals react=React --jsx React.createElement"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kyuch4n/react-inline-autocomplete.git"
   },
-  "author": "KYU",
+  "author": "Kyu",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kyuch4n/react-inline-autocomplete/issues"
   },
-  "homepage": "https://github.com/kyuch4n/react-inline-autocomplete#readme"
+  "homepage": "https://github.com/kyuch4n/react-inline-autocomplete#readme",
+  "dependencies": {
+    "@types/classnames": "^2.2.10",
+    "@types/react": "^16.9.49",
+    "classnames": "^2.2.6"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^11.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.3.0",
+    "@typescript-eslint/parser": "^4.3.0",
+    "eslint": "^7.10.0",
+    "husky": "^4.3.0",
+    "lint-staged": "^10.4.0",
+    "microbundle": "^0.12.4"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1"
+  },
+  "lint-staged": {
+    "lib/**/*.ts?(x)": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }
 }
