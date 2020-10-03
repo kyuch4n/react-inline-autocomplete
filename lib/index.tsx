@@ -17,7 +17,7 @@ export interface Props {
 
 export interface DataSourceItem {
   value: string | number;
-  text: string;
+  text: string
 }
 
 const Autocomplete: React.ForwardRefRenderFunction<HTMLInputElement, Props> = (props, ref) => {
