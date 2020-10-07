@@ -7,6 +7,10 @@ import './App.scss';
 
 const dataSource: DataSourceItem[] = [
   {
+    text: 'Amazon',
+    value: 'Amazon',
+  },
+  {
     text: 'Google',
     value: 'Google',
   },
@@ -23,12 +27,12 @@ const dataSource: DataSourceItem[] = [
     value: 'ApplePencil',
   },
   {
-    text: 'Amazon',
-    value: 'Amazon',
+    text: 'Apple Watch',
+    value: 'AppleWatch',
   },
   {
-    text: 'Microsoft',
-    value: 'Microsoft',
+    text: 'Apple Power',
+    value: 'ApplePower',
   },
 ].map((i) =>
   Object.assign(i, {
@@ -39,7 +43,7 @@ const dataSource: DataSourceItem[] = [
 function App() {
   const [timelineList, setTimelineList] = useState<
     {
-      text: string;
+      value: string;
       event: string;
     }[]
   >([]);
@@ -49,28 +53,35 @@ function App() {
     ref.current!.focus();
   };
 
-  const addTimelineItem = (item: { text: string; event: string }) => {
+  const addTimelineItem = (item: { value: string; event: string }) => {
     setTimelineList((prevList) => [item].concat(prevList));
   };
 
-  const onChange = (text: string) => {
+  const onChange = (value: string) => {
     addTimelineItem({
-      text,
-      event: 'change',
+      value,
+      event: 'Change',
     });
   };
 
-  const onConfirm = (item: DataSourceItem) => {
+  const onPressEnter = (value: string) => {
     addTimelineItem({
-      text: item.text,
-      event: 'confirm',
+      value,
+      event: 'PressEnter',
+    });
+  };
+
+  const onSelect = (item: DataSourceItem) => {
+    addTimelineItem({
+      value: item.text,
+      event: 'Select',
     });
   };
 
   return (
     <div className="App">
       <section>
-        <b>Data Source:</b>&nbsp;&nbsp;
+        {/* <b>Data Source:</b>&nbsp;&nbsp; */}
         {dataSource.map((i, idx) => (
           <Tag key={idx} color={i.color}>
             {i.text}
@@ -83,7 +94,8 @@ function App() {
           className="inline-autocomplete-example"
           dataSource={dataSource}
           onChange={onChange}
-          onConfirm={onConfirm}
+          onSelect={onSelect}
+          onPressEnter={onPressEnter}
         ></InlineAutocomplete>
         <Button type="primary" size="large" onClick={focus}>
           Focus
@@ -93,7 +105,9 @@ function App() {
         <Timeline>
           {timelineList.map((i, idx) => (
             <Timeline.Item key={idx}>
-              Event: {i.event}, {i.text}
+              <pre>
+                Event: {i.event}, {i.value}
+              </pre>
             </Timeline.Item>
           ))}
         </Timeline>

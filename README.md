@@ -29,6 +29,10 @@ import 'react-inline-autocomplete/dist/index.css';
 
 const dataSource: DataSourceItem[] = [
   {
+    text: 'Amazon',
+    value: 'Amazon',
+  },
+  {
     text: 'Google',
     value: 'Google',
   },
@@ -45,12 +49,12 @@ const dataSource: DataSourceItem[] = [
     value: 'ApplePencil',
   },
   {
-    text: 'Amazon',
-    value: 'Amazon',
+    text: 'Apple Watch',
+    value: 'AppleWatch',
   },
   {
-    text: 'Microsoft',
-    value: 'Microsoft',
+    text: 'Apple Power',
+    value: 'ApplePower',
   },
 ];
 
@@ -59,8 +63,9 @@ function App() {
   const focus = () => {
     ref.current!.focus();
   };
-  const onChange = () => {};
-  const onConfirm = () => {};
+  const onChange = (value: string) => {};
+  const onPressEnter = (value: string) => {};
+  const onSelect = (item: DataSourceItem) => {};
 
   return (
     <InlineAutocomplete
@@ -68,7 +73,8 @@ function App() {
       className="inline-autocomplete-example"
       dataSource={dataSource}
       onChange={onChange}
-      onConfirm={onConfirm}
+      onConfirm={onPressEnter}
+      onSelect={onSelect}
     ></InlineAutocomplete>
   );
 }
@@ -76,18 +82,19 @@ function App() {
 
 ## Props
 
-| Property    | Type                           |   Default | Required | Description                                      |
-| ----------- | ------------------------------ | --------: | -------- | ------------------------------------------------ |
-| value       | string                         | undefined | no       | input value                                      |
-| dataSource  | DataSourceItem                 |        [] | yes      | Array of available items to search.              |
-| className   | string                         |        "" | yes      |                                                  |
-| style       | React.CSSProperties            | undefined | no       |                                                  |
-| placeholder | string                         | undefined | no       |                                                  |
-| disabled    | boolean                        |     false | no       | Whether to disable, the default is false.        |
-| onBlur      | () => void                     | undefined | no       | onBlur handler                                   |
-| onChange    | (text: string) => void;        | undefined | no       | onChange handler                                 |
-| onFocus     | () => void                     | undefined | no       | onFocus handler                                  |
-| onConfirm   | (item: DataSourceItem) => void | undefined | no       | onConfirm handler(called when you press `Enter`) |
+| Property     | Type                           |   Default | Required | Description                                         |
+| ------------ | ------------------------------ | --------: | -------- | --------------------------------------------------- |
+| value        | string                         | undefined | no       | input value                                         |
+| dataSource   | DataSourceItem                 |        [] | yes      | Array of available items to search.                 |
+| className    | string                         |        "" | yes      |                                                     |
+| style        | React.CSSProperties            | undefined | no       |                                                     |
+| placeholder  | string                         | undefined | no       |                                                     |
+| disabled     | boolean                        |     false | no       | Whether to disable, the default is false.           |
+| onBlur       | () => void                     | undefined | no       | onBlur handler                                      |
+| onFocus      | () => void                     | undefined | no       | onFocus handler                                     |
+| onChange     | (value: string) => void        | undefined | no       | onChange handler                                    |
+| onPressEnter | (value: string) => void        | undefined | no       | onPressEnter handler(called when you press `Enter`) |
+| onSelect     | (item: DataSourceItem) => void | undefined | no       | onSelect handler(called when you press `Tab`)       |
 
 ## Development
 

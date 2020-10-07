@@ -16,53 +16,98 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   return target;
 }
 
+var KeyEnum;
+
+(function (KeyEnum) {
+  KeyEnum["TAB"] = "Tab";
+  KeyEnum["ENTER"] = "Enter";
+  KeyEnum["ARROW_UP"] = "ArrowUp";
+  KeyEnum["ARROW_DOWN"] = "ArrowDown";
+})(KeyEnum || (KeyEnum = {}));
+
 var styles = {"wrap":"_31Ve9","input":"_ZX6Lw","complete":"_NwvFz"};
 
 const Autocomplete = (props, ref) => {
+  var _matchedDataSource$ac;
+
   const {
     value,
     dataSource,
     className,
     onBlur,
-    onChange,
     onFocus,
-    onConfirm
+    onChange,
+    onPressEnter,
+    onSelect
   } = props,
-        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "onBlur", "onChange", "onFocus", "onConfirm"]);
+        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "onBlur", "onFocus", "onChange", "onPressEnter", "onSelect"]);
 
-  const [matchedDSItem, setMatchedDSItem] = useState();
-  const [_value, setValue] = useState('');
-  const controlledValue = value != null ? value : _value; // input ref
-
+  let [_value, setValue] = useState('');
+  let [matchedDataSource, setMatchedDataSource] = useState();
+  let [activeIndex, setActiveIndex] = useState(0);
+  let controlledValue = value != null ? value : _value;
   const inputRef = useRef();
   React.useImperativeHandle(ref, () => inputRef.current);
+
+  const updateValue = value => {
+    onChange && onChange(value);
+    setValue(value);
+  };
+
+  const handleChange = e => {
+    const value = e.target.value;
+    updateValue(value);
+    if (!value) return setMatchedDataSource([]);
+    setActiveIndex(0);
+    setMatchedDataSource(dataSource.filter(i => {
+      return i.text.startsWith(value) && i.text !== value;
+    }));
+  };
+
+  const handleKeyDown = e => {
+    if (Object.values(KeyEnum).includes(e.key)) {
+      e.preventDefault();
+    }
+
+    switch (e.key) {
+      case KeyEnum.TAB:
+        let matchedDataSourceItem = matchedDataSource == null ? void 0 : matchedDataSource[activeIndex];
+        if (!matchedDataSourceItem) return;
+        updateValue(matchedDataSourceItem.text);
+        onSelect && onSelect(matchedDataSourceItem);
+        setMatchedDataSource([]);
+        break;
+
+      case KeyEnum.ARROW_UP:
+        setActiveIndex(idx => {
+          if (matchedDataSource == null ? void 0 : matchedDataSource.length) {
+            return (idx - 1 + matchedDataSource.length) % matchedDataSource.length;
+          }
+
+          return 0;
+        });
+        break;
+
+      case KeyEnum.ARROW_DOWN:
+        setActiveIndex(idx => {
+          if (matchedDataSource == null ? void 0 : matchedDataSource.length) {
+            return (idx + 1) % matchedDataSource.length;
+          }
+
+          return 0;
+        });
+        break;
+
+      case KeyEnum.ENTER:
+        onPressEnter && onPressEnter(controlledValue);
+        setMatchedDataSource([]);
+        break;
+    }
+  };
+
   const wrapClassString = classNames('ria-wrap', styles.wrap, className);
   const inputClassString = classNames('ria-input', styles.input);
   const completeClassString = classNames('ria-complete', styles.complete);
-
-  const _onChange = e => {
-    // trigger onChange
-    const text = e.target.value;
-    onChange && onChange(text);
-    setValue(text); // search matched data source item
-
-    if (!text) return setMatchedDSItem(null);
-    const matchedDSItem = dataSource.find(i => i.text.startsWith(text));
-    setMatchedDSItem(matchedDSItem);
-  };
-
-  const _onConfirm = e => {
-    if (e.key !== 'Enter') return;
-    if (!matchedDSItem) return; // trigger onChange
-
-    const text = matchedDSItem == null ? void 0 : matchedDSItem.text;
-    setValue(text);
-    onChange && onChange(text); // trigger onConfirm and reset
-
-    onConfirm && onConfirm(matchedDSItem);
-    setMatchedDSItem(null);
-  };
-
   return React.createElement("div", {
     className: wrapClassString
   }, React.createElement("input", Object.assign({
@@ -72,11 +117,11 @@ const Autocomplete = (props, ref) => {
     type: "text",
     onBlur: onBlur,
     onFocus: onFocus,
-    onChange: _onChange,
-    onKeyDown: _onConfirm
+    onChange: handleChange,
+    onKeyDown: handleKeyDown
   }, others)), React.createElement("div", {
     className: completeClassString
-  }, matchedDSItem == null ? void 0 : matchedDSItem.text));
+  }, matchedDataSource == null ? void 0 : (_matchedDataSource$ac = matchedDataSource[activeIndex]) == null ? void 0 : _matchedDataSource$ac.text));
 };
 
 const RefAutoComplete = React.forwardRef(Autocomplete);

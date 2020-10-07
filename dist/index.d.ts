@@ -7,13 +7,14 @@ export interface Props {
     placeholder?: string;
     disabled?: boolean;
     onBlur?: () => void;
-    onChange?: (text: string) => void;
     onFocus?: () => void;
-    onConfirm?: (item: DataSourceItem) => void;
+    onChange?: (value: string) => void;
+    onPressEnter?: (value: string) => void;
+    onSelect?: (item: DataSourceItem) => void;
 }
 export interface DataSourceItem {
-    value: string | number;
     text: string;
+    value: string | number;
     [key: string]: any;
 }
 declare const RefAutoComplete: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLInputElement>>;

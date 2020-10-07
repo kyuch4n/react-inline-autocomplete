@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import classNames from 'classnames';
+import { KeyEnum } from './key-enum';
 import styles from './index.module.css';
 
 export interface Props {
@@ -10,56 +11,98 @@ export interface Props {
   placeholder?: string;
   disabled?: boolean;
   onBlur?: () => void;
-  onChange?: (text: string) => void;
   onFocus?: () => void;
-  onConfirm?: (item: DataSourceItem) => void;
+  onChange?: (value: string) => void;
+  onPressEnter?: (value: string) => void;
+  onSelect?: (item: DataSourceItem) => void;
 }
 
 export interface DataSourceItem {
-  value: string | number;
   text: string;
+  value: string | number;
   [key: string]: any;
 }
 
 const Autocomplete: React.ForwardRefRenderFunction<HTMLInputElement, Props> = (props, ref) => {
-  const { value, dataSource, className, onBlur, onChange, onFocus, onConfirm, ...others } = props;
-  const [matchedDSItem, setMatchedDSItem] = useState<DataSourceItem | null>();
+  const {
+    value,
+    dataSource,
+    className,
+    onBlur,
+    onFocus,
+    onChange,
+    onPressEnter,
+    onSelect,
+    ...others
+  } = props;
   const [_value, setValue] = useState('');
+  const [matchedDataSource, setMatchedDataSource] = useState<DataSourceItem[]>();
+  const [activeIndex, setActiveIndex] = useState(0);
   const controlledValue = value ?? _value;
 
-  // input ref
   const inputRef = useRef<HTMLInputElement>();
   React.useImperativeHandle(ref, () => inputRef.current!);
+
+  const updateValue = (value: string) => {
+    onChange && onChange(value);
+    setValue(value);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    updateValue(value);
+
+    if (!value) return setMatchedDataSource([]);
+    setActiveIndex(0);
+    setMatchedDataSource(
+      dataSource.filter((i) => {
+        return i.text.startsWith(value) && i.text !== value;
+      })
+    );
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (Object.values(KeyEnum).includes(e.key as KeyEnum)) {
+      e.preventDefault();
+    }
+
+    switch (e.key) {
+      case KeyEnum.TAB:
+        const matchedDataSourceItem = matchedDataSource?.[activeIndex];
+        if (!matchedDataSourceItem) return;
+
+        updateValue(matchedDataSourceItem.text);
+        onSelect && onSelect(matchedDataSourceItem);
+        setMatchedDataSource([]);
+        break;
+      case KeyEnum.ARROW_UP:
+        setActiveIndex((idx) => {
+          if (matchedDataSource?.length) {
+            return (idx - 1 + matchedDataSource.length) % matchedDataSource.length;
+          }
+          return 0;
+        });
+        break;
+      case KeyEnum.ARROW_DOWN:
+        setActiveIndex((idx) => {
+          if (matchedDataSource?.length) {
+            return (idx + 1) % matchedDataSource.length;
+          }
+          return 0;
+        });
+        break;
+      case KeyEnum.ENTER:
+        onPressEnter && onPressEnter(controlledValue);
+        setMatchedDataSource([]);
+        break;
+      default:
+        break;
+    }
+  };
 
   const wrapClassString = classNames('ria-wrap', styles.wrap, className);
   const inputClassString = classNames('ria-input', styles.input);
   const completeClassString = classNames('ria-complete', styles.complete);
-
-  const _onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // trigger onChange
-    const text = e.target.value;
-    onChange && onChange(text);
-    setValue(text);
-
-    // search matched data source item
-    if (!text) return setMatchedDSItem(null);
-    const matchedDSItem = dataSource.find((i) => i.text.startsWith(text));
-    setMatchedDSItem(matchedDSItem);
-  };
-
-  const _onConfirm = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== 'Enter') return;
-    if (!matchedDSItem) return;
-
-    // trigger onChange
-    const text = matchedDSItem?.text;
-    setValue(text);
-    onChange && onChange(text);
-
-    // trigger onConfirm and reset
-    onConfirm && onConfirm(matchedDSItem);
-    setMatchedDSItem(null);
-  };
 
   return (
     <div className={wrapClassString}>
@@ -70,11 +113,11 @@ const Autocomplete: React.ForwardRefRenderFunction<HTMLInputElement, Props> = (p
         type="text"
         onBlur={onBlur}
         onFocus={onFocus}
-        onChange={_onChange}
-        onKeyDown={_onConfirm}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
         {...others}
       />
-      <div className={completeClassString}>{matchedDSItem?.text}</div>
+      <div className={completeClassString}>{matchedDataSource?.[activeIndex]?.text}</div>
     </div>
   );
 };
