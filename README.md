@@ -1,6 +1,8 @@
 # React Inline Autocomplete
 
-[![npm version](https://badge.fury.io/js/react-inline-autocomplete.svg)](https://badge.fury.io/js/react-inline-autocomplete)
+![version](https://img.shields.io/npm/v/react-inline-autocomplete)
+![download](https://img.shields.io/npm/dt/react-inline-autocomplete)
+![license](https://img.shields.io/npm/l/react-inline-autocomplete)
 
 ## Installation
 
