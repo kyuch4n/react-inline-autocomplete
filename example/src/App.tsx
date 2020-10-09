@@ -93,6 +93,7 @@ function App() {
           ref={ref}
           className="inline-autocomplete-example"
           dataSource={dataSource}
+          caseSensitive={false}
           onChange={onChange}
           onSelect={onSelect}
           onPressEnter={onPressEnter}

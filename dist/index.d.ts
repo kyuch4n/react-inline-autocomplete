@@ -6,6 +6,8 @@ export interface Props {
     style?: React.CSSProperties;
     placeholder?: string;
     disabled?: boolean;
+    navigate?: boolean;
+    caseSensitive?: boolean;
     onBlur?: () => void;
     onFocus?: () => void;
     onChange?: (value: string) => void;

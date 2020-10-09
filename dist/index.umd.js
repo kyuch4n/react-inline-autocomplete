@@ -1,10 +1,11 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('react'), require('classnames')) :
-  typeof define === 'function' && define.amd ? define(['react', 'classnames'], factory) :
-  (global = global || self, global.reactInlineAutocomplete = factory(global.React, global.classnames));
-}(this, (function (React, classNames) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('react'), require('classnames'), require('ignore-case')) :
+  typeof define === 'function' && define.amd ? define(['react', 'classnames', 'ignore-case'], factory) :
+  (global = global || self, global.reactInlineAutocomplete = factory(global.React, global.classnames, global.ignoreCase));
+}(this, (function (React, classNames, ignoreCase) {
   var React__default = 'default' in React ? React['default'] : React;
   classNames = classNames && Object.prototype.hasOwnProperty.call(classNames, 'default') ? classNames['default'] : classNames;
+  ignoreCase = ignoreCase && Object.prototype.hasOwnProperty.call(ignoreCase, 'default') ? ignoreCase['default'] : ignoreCase;
 
   function _objectWithoutPropertiesLoose(source, excluded) {
     if (source == null) return {};
@@ -33,21 +34,23 @@
   var styles = {"wrap":"_31Ve9","input":"_ZX6Lw","complete":"_NwvFz"};
 
   var Autocomplete = function Autocomplete(props, ref) {
-    var _matchedDataSource$ac;
-
     var value = props.value,
         dataSource = props.dataSource,
         className = props.className,
+        _props$navigate = props.navigate,
+        navigate = _props$navigate === void 0 ? true : _props$navigate,
+        _props$caseSensitive = props.caseSensitive,
+        caseSensitive = _props$caseSensitive === void 0 ? true : _props$caseSensitive,
         onBlur = props.onBlur,
         onFocus = props.onFocus,
         onChange = props.onChange,
         onPressEnter = props.onPressEnter,
         onSelect = props.onSelect,
-        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "onBlur", "onFocus", "onChange", "onPressEnter", "onSelect"]);
+        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "navigate", "caseSensitive", "onBlur", "onFocus", "onChange", "onPressEnter", "onSelect"]);
 
     var _useState = React.useState(''),
-        _value = _useState[0],
-        setValue = _useState[1];
+        innerVal = _useState[0],
+        setInnerVal = _useState[1];
 
     var _useState2 = React.useState(),
         matchedDataSource = _useState2[0],
@@ -57,7 +60,11 @@
         activeIndex = _useState3[0],
         setActiveIndex = _useState3[1];
 
-    var controlledValue = value != null ? value : _value;
+    var ctrlValue = value != null ? value : innerVal;
+    /**
+     * inputRef
+     */
+
     var inputRef = React.useRef();
     React__default.useImperativeHandle(ref, function () {
       return inputRef.current;
@@ -65,18 +72,33 @@
 
     var updateValue = function updateValue(value) {
       onChange && onChange(value);
-      setValue(value);
+      setInnerVal(value);
     };
+
+    var updateMatchedDataSource = function updateMatchedDataSource(value) {
+      setActiveIndex(0);
+      value ? setMatchedDataSource(dataSource.filter(function (_ref) {
+        var text = _ref.text;
+        return caseSensitive ? text.startsWith(value) && text !== value : ignoreCase.startsWith(text, value) && !ignoreCase.equals(text, value);
+      })) : setMatchedDataSource([]);
+    };
+    /**
+     * InputChange Handler
+     * @param e
+     */
+
 
     var handleChange = function handleChange(e) {
       var value = e.target.value;
       updateValue(value);
-      if (!value) return setMatchedDataSource([]);
-      setActiveIndex(0);
-      setMatchedDataSource(dataSource.filter(function (i) {
-        return i.text.startsWith(value) && i.text !== value;
-      }));
+      updateMatchedDataSource(value);
     };
+    /**
+     * KeyDown Handler
+     * deal with `Tab` | `Enter` | `ArrowUp` | `ArrowDown`
+     * @param e
+     */
+
 
     var handleKeyDown = function handleKeyDown(e) {
       if (Object.values(KeyEnum).includes(e.key)) {
@@ -87,12 +109,26 @@
         case KeyEnum.TAB:
           var matchedDataSourceItem = matchedDataSource == null ? void 0 : matchedDataSource[activeIndex];
           if (!matchedDataSourceItem) return;
-          updateValue(matchedDataSourceItem.text);
+          /**
+           * onChange >>> onSelect >>> Search matched item
+           */
+
+          var text = matchedDataSourceItem.text;
+          updateValue(text);
           onSelect && onSelect(matchedDataSourceItem);
-          setMatchedDataSource([]);
+          updateMatchedDataSource(text);
+          break;
+
+        case KeyEnum.ENTER:
+          /**
+           * onPressEnter >>> Reset
+           */
+          onPressEnter && onPressEnter(ctrlValue);
+          updateMatchedDataSource();
           break;
 
         case KeyEnum.ARROW_UP:
+          if (!navigate) break;
           setActiveIndex(function (idx) {
             if (matchedDataSource == null ? void 0 : matchedDataSource.length) {
               return (idx - 1 + matchedDataSource.length) % matchedDataSource.length;
@@ -103,6 +139,7 @@
           break;
 
         case KeyEnum.ARROW_DOWN:
+          if (!navigate) break;
           setActiveIndex(function (idx) {
             if (matchedDataSource == null ? void 0 : matchedDataSource.length) {
               return (idx + 1) % matchedDataSource.length;
@@ -111,23 +148,26 @@
             return 0;
           });
           break;
-
-        case KeyEnum.ENTER:
-          onPressEnter && onPressEnter(controlledValue);
-          setMatchedDataSource([]);
-          break;
       }
     };
 
-    var wrapClassString = classNames('ria-wrap', styles.wrap, className);
+    var breakUp = function breakUp() {
+      var _matchedDataSource$ac;
+
+      return (matchedDataSource == null ? void 0 : (_matchedDataSource$ac = matchedDataSource[activeIndex]) == null ? void 0 : _matchedDataSource$ac.text) ? "" + ctrlValue + matchedDataSource[activeIndex].text.slice(ctrlValue.length) : undefined;
+    };
+
+    var wrapClassString = classNames('ria-wrap', styles.wrap, className); // `className` should cover `styles.wrap`
+
     var inputClassString = classNames('ria-input', styles.input);
     var completeClassString = classNames('ria-complete', styles.complete);
+    var completeContent = breakUp();
     return React__default.createElement("div", {
       className: wrapClassString
     }, React__default.createElement("input", Object.assign({
       ref: inputRef,
       className: inputClassString,
-      value: controlledValue,
+      value: ctrlValue,
       type: "text",
       onBlur: onBlur,
       onFocus: onFocus,
@@ -135,7 +175,7 @@
       onKeyDown: handleKeyDown
     }, others)), React__default.createElement("div", {
       className: completeClassString
-    }, matchedDataSource == null ? void 0 : (_matchedDataSource$ac = matchedDataSource[activeIndex]) == null ? void 0 : _matchedDataSource$ac.text));
+    }, completeContent));
   };
 
   var RefAutoComplete = React__default.forwardRef(Autocomplete);

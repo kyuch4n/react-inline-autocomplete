@@ -1,6 +1,6 @@
 {
   "name": "react-inline-autocomplete",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "react-inline-autocomplete",
   "keywords": [
     "react",
@@ -33,7 +33,8 @@
   "dependencies": {
     "@types/classnames": "^2.2.10",
     "@types/react": "^16.9.49",
-    "classnames": "^2.2.6"
+    "classnames": "^2.2.6",
+    "ignore-case": "^0.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",

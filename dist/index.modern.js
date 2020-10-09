@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import classNames from 'classnames';
+import ignoreCase from 'ignore-case';
 
 function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
@@ -28,41 +29,61 @@ var KeyEnum;
 var styles = {"wrap":"_31Ve9","input":"_ZX6Lw","complete":"_NwvFz"};
 
 const Autocomplete = (props, ref) => {
-  var _matchedDataSource$ac;
-
   const {
     value,
     dataSource,
     className,
+    navigate = true,
+    caseSensitive = true,
     onBlur,
     onFocus,
     onChange,
     onPressEnter,
     onSelect
   } = props,
-        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "onBlur", "onFocus", "onChange", "onPressEnter", "onSelect"]);
+        others = _objectWithoutPropertiesLoose(props, ["value", "dataSource", "className", "navigate", "caseSensitive", "onBlur", "onFocus", "onChange", "onPressEnter", "onSelect"]);
 
-  let [_value, setValue] = useState('');
-  let [matchedDataSource, setMatchedDataSource] = useState();
-  let [activeIndex, setActiveIndex] = useState(0);
-  let controlledValue = value != null ? value : _value;
+  const [innerVal, setInnerVal] = useState('');
+  const [matchedDataSource, setMatchedDataSource] = useState();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const ctrlValue = value != null ? value : innerVal;
+  /**
+   * inputRef
+   */
+
   const inputRef = useRef();
   React.useImperativeHandle(ref, () => inputRef.current);
 
   const updateValue = value => {
     onChange && onChange(value);
-    setValue(value);
+    setInnerVal(value);
   };
+
+  const updateMatchedDataSource = value => {
+    setActiveIndex(0);
+    value ? setMatchedDataSource(dataSource.filter(({
+      text
+    }) => {
+      return caseSensitive ? text.startsWith(value) && text !== value : ignoreCase.startsWith(text, value) && !ignoreCase.equals(text, value);
+    })) : setMatchedDataSource([]);
+  };
+  /**
+   * InputChange Handler
+   * @param e
+   */
+
 
   const handleChange = e => {
     const value = e.target.value;
     updateValue(value);
-    if (!value) return setMatchedDataSource([]);
-    setActiveIndex(0);
-    setMatchedDataSource(dataSource.filter(i => {
-      return i.text.startsWith(value) && i.text !== value;
-    }));
+    updateMatchedDataSource(value);
   };
+  /**
+   * KeyDown Handler
+   * deal with `Tab` | `Enter` | `ArrowUp` | `ArrowDown`
+   * @param e
+   */
+
 
   const handleKeyDown = e => {
     if (Object.values(KeyEnum).includes(e.key)) {
@@ -71,14 +92,30 @@ const Autocomplete = (props, ref) => {
 
     switch (e.key) {
       case KeyEnum.TAB:
-        let matchedDataSourceItem = matchedDataSource == null ? void 0 : matchedDataSource[activeIndex];
+        const matchedDataSourceItem = matchedDataSource == null ? void 0 : matchedDataSource[activeIndex];
         if (!matchedDataSourceItem) return;
-        updateValue(matchedDataSourceItem.text);
+        /**
+         * onChange >>> onSelect >>> Search matched item
+         */
+
+        const {
+          text
+        } = matchedDataSourceItem;
+        updateValue(text);
         onSelect && onSelect(matchedDataSourceItem);
-        setMatchedDataSource([]);
+        updateMatchedDataSource(text);
+        break;
+
+      case KeyEnum.ENTER:
+        /**
+         * onPressEnter >>> Reset
+         */
+        onPressEnter && onPressEnter(ctrlValue);
+        updateMatchedDataSource();
         break;
 
       case KeyEnum.ARROW_UP:
+        if (!navigate) break;
         setActiveIndex(idx => {
           if (matchedDataSource == null ? void 0 : matchedDataSource.length) {
             return (idx - 1 + matchedDataSource.length) % matchedDataSource.length;
@@ -89,6 +126,7 @@ const Autocomplete = (props, ref) => {
         break;
 
       case KeyEnum.ARROW_DOWN:
+        if (!navigate) break;
         setActiveIndex(idx => {
           if (matchedDataSource == null ? void 0 : matchedDataSource.length) {
             return (idx + 1) % matchedDataSource.length;
@@ -97,23 +135,26 @@ const Autocomplete = (props, ref) => {
           return 0;
         });
         break;
-
-      case KeyEnum.ENTER:
-        onPressEnter && onPressEnter(controlledValue);
-        setMatchedDataSource([]);
-        break;
     }
   };
 
-  const wrapClassString = classNames('ria-wrap', styles.wrap, className);
+  const breakUp = () => {
+    var _matchedDataSource$ac;
+
+    return (matchedDataSource == null ? void 0 : (_matchedDataSource$ac = matchedDataSource[activeIndex]) == null ? void 0 : _matchedDataSource$ac.text) ? `${ctrlValue}${matchedDataSource[activeIndex].text.slice(ctrlValue.length)}` : undefined;
+  };
+
+  const wrapClassString = classNames('ria-wrap', styles.wrap, className); // `className` should cover `styles.wrap`
+
   const inputClassString = classNames('ria-input', styles.input);
   const completeClassString = classNames('ria-complete', styles.complete);
+  const completeContent = breakUp();
   return React.createElement("div", {
     className: wrapClassString
   }, React.createElement("input", Object.assign({
     ref: inputRef,
     className: inputClassString,
-    value: controlledValue,
+    value: ctrlValue,
     type: "text",
     onBlur: onBlur,
     onFocus: onFocus,
@@ -121,7 +162,7 @@ const Autocomplete = (props, ref) => {
     onKeyDown: handleKeyDown
   }, others)), React.createElement("div", {
     className: completeClassString
-  }, matchedDataSource == null ? void 0 : (_matchedDataSource$ac = matchedDataSource[activeIndex]) == null ? void 0 : _matchedDataSource$ac.text));
+  }, completeContent));
 };
 
 const RefAutoComplete = React.forwardRef(Autocomplete);

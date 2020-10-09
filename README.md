@@ -74,6 +74,7 @@ function App() {
       ref={ref}
       className="inline-autocomplete-example"
       dataSource={dataSource}
+      caseSensitive={false}
       onChange={onChange}
       onConfirm={onPressEnter}
       onSelect={onSelect}
@@ -84,19 +85,21 @@ function App() {
 
 ## Props
 
-| Property     | Type                           |   Default | Required | Description                                         |
-| ------------ | ------------------------------ | --------: | -------- | --------------------------------------------------- |
-| value        | string                         | undefined | no       | input value                                         |
-| dataSource   | DataSourceItem                 |        [] | yes      | Array of available items to search.                 |
-| className    | string                         |        "" | yes      |                                                     |
-| style        | React.CSSProperties            | undefined | no       |                                                     |
-| placeholder  | string                         | undefined | no       |                                                     |
-| disabled     | boolean                        |     false | no       | Whether to disable, the default is false.           |
-| onBlur       | () => void                     | undefined | no       | onBlur handler                                      |
-| onFocus      | () => void                     | undefined | no       | onFocus handler                                     |
-| onChange     | (value: string) => void        | undefined | no       | onChange handler                                    |
-| onPressEnter | (value: string) => void        | undefined | no       | onPressEnter handler(called when you press `Enter`) |
-| onSelect     | (item: DataSourceItem) => void | undefined | no       | onSelect handler(called when you press `Tab`)       |
+| Property      | Type                           |   Default | Required | Description                                           |
+| ------------- | ------------------------------ | --------: | -------- | ----------------------------------------------------- |
+| value         | string                         | undefined | no       | input value                                           |
+| dataSource    | DataSourceItem                 |        [] | yes      | Array of available items to search.                   |
+| className     | string                         |        "" | yes      |                                                       |
+| style         | React.CSSProperties            | undefined | no       |                                                       |
+| placeholder   | string                         | undefined | no       |                                                       |
+| disabled      | boolean                        |     false | no       | Whether to disable, the default is false.             |
+| caseSensitive | boolean                        |      true | no       |                                                       |
+| navigate      | boolean                        |      true | no       | You can switch auto-complete when `navigate` is true. |
+| onBlur        | () => void                     | undefined | no       | onBlur handler                                        |
+| onFocus       | () => void                     | undefined | no       | onFocus handler                                       |
+| onChange      | (value: string) => void        | undefined | no       | onChange handler                                      |
+| onPressEnter  | (value: string) => void        | undefined | no       | onPressEnter handler(called when you press `Enter`)   |
+| onSelect      | (item: DataSourceItem) => void | undefined | no       | onSelect handler(called when you press `Tab`)         |
 
 ## Development
 
